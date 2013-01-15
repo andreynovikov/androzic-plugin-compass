@@ -1,0 +1,7 @@
+<b>This is an Androzic plugin.</b> It requires Androzic to be installed. It provides magnetic compass screen. Requires Androzic version 1.7 or higher.
+
+The compass uses magnetic sensor of your device and works correctly both in portrait and landscape mode, optionally locked to portrait mode.
+
+To get the most accurate readings from the compass be sure to keep it in a horizontal level. The compass is most accurate when close to earth.
+
+The compass fully depends on the performance of your device. If it is inaccurate, please check that you aren't being affected by a magnetic field (large metal objects, magnets, high voltage devices). Also you should calibrate your device before each use of compass.
