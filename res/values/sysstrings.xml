@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_compass_smooth" translatable="false">compass_smooth</string>
+    <string name="pref_compass_disableorientation" translatable="false">compass_disableorientation</string>
+
+</resources>

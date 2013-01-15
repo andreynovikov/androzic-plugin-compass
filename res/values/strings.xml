@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Androzic Compass Plugin</string>
+    <string name="compass_title">Compass</string>
+    <string name="menu_preferences">Settings</string>
+    <string name="pref_compass_smooth_title">Smooth rotation</string>
+    <string name="pref_compass_disableorientation_title">Disable orientation change</string>
+
+</resources>
