@@ -37,11 +37,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Surface;
-import android.view.Window;
 import android.view.WindowManager;
-
-import com.androzic.plugin.compass.R;
-import com.androzic.ui.view.HSIView;
 
 public class CompassActivity extends Activity implements SensorEventListener, OnSharedPreferenceChangeListener
 {
@@ -62,7 +58,7 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 	private float pitch = 0.0f;
 	private float roll = 0.0f;
 
-	private HSIView hsiView;
+	private CompassView compassView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -79,8 +75,7 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 		x = SensorManager.AXIS_X;
 		y = SensorManager.AXIS_Y;
 
-		hsiView = (HSIView) findViewById(R.id.hsiview);
-		hsiView.setCompassMode(true);
+		compassView = (CompassView) findViewById(R.id.compass);
 
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		if (sensorManager != null)
@@ -96,6 +91,7 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_compass_smooth));
+		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_compass_rotateface));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_compass_disableorientation));
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 	}
@@ -175,9 +171,15 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 					azimuth = (float) Math.toDegrees(matrixValues[0]);
 					pitch = (float) Math.toDegrees(matrixValues[1]);
 					roll = (float) Math.toDegrees(matrixValues[2]);
+					
+					// Sometimes azimuth becomes negative
+					if (azimuth < 0)
+						azimuth += 360.;
+					while (azimuth > 360.)
+						azimuth -= 360.;
 
-					hsiView.setAzimuth(azimuth);
-					hsiView.setPitch(pitch);
+					compassView.setAzimuth(azimuth);
+					compassView.setPitch(pitch);
 				}
 			}
 		}
@@ -208,7 +210,11 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 	{
 		if (key.equals(getString(R.string.pref_compass_smooth)))
 		{
-			hsiView.setSmothing(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_smooth)));
+			compassView.setSmothing(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_smooth)));
+		}
+		if (key.equals(getString(R.string.pref_compass_rotateface)))
+		{
+			compassView.setFaceRotation(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_rotateface)));
 		}
 		if (key.equals(getString(R.string.pref_compass_disableorientation)))
 		{

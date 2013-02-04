@@ -4,8 +4,8 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
-<com.androzic.ui.view.HSIView
-	android:id="@+id/hsiview"
+<com.androzic.plugin.compass.CompassView
+	android:id="@+id/compass"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:layout_alignParentTop="true"

@@ -2,6 +2,7 @@
 <resources>
 
     <string name="pref_compass_smooth" translatable="false">compass_smooth</string>
+    <string name="pref_compass_rotateface" translatable="false">compass_rotateface</string>
     <string name="pref_compass_disableorientation" translatable="false">compass_disableorientation</string>
 
 </resources>

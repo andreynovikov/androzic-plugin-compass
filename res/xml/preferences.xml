@@ -6,6 +6,10 @@
         android:key="@string/pref_compass_smooth"
         android:title="@string/pref_compass_smooth_title" />
     <CheckBoxPreference
+        android:defaultValue="@bool/def_rotateface"
+        android:key="@string/pref_compass_rotateface"
+        android:title="@string/pref_compass_rotateface_title" />
+    <CheckBoxPreference
         android:defaultValue="@bool/def_disableorientation"
         android:key="@string/pref_compass_disableorientation"
         android:title="@string/pref_compass_disableorientation_title" />
