@@ -77,6 +77,9 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 
 		compassView = (CompassView) findViewById(R.id.compass);
 
+		if (savedInstanceState != null)
+			compassView.getThread().restoreState(savedInstanceState);
+
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		if (sensorManager != null)
 		{
@@ -171,15 +174,15 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 					azimuth = (float) Math.toDegrees(matrixValues[0]);
 					pitch = (float) Math.toDegrees(matrixValues[1]);
 					roll = (float) Math.toDegrees(matrixValues[2]);
-					
+
 					// Sometimes azimuth becomes negative
 					if (azimuth < 0)
 						azimuth += 360.;
 					while (azimuth > 360.)
 						azimuth -= 360.;
 
-					compassView.setAzimuth(azimuth);
-					compassView.setPitch(pitch);
+					compassView.getThread().setAzimuth(azimuth);
+					compassView.getThread().setPitch(pitch);
 				}
 			}
 		}
@@ -210,11 +213,11 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 	{
 		if (key.equals(getString(R.string.pref_compass_smooth)))
 		{
-			compassView.setSmothing(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_smooth)));
+			compassView.getThread().setSmothing(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_smooth)));
 		}
 		if (key.equals(getString(R.string.pref_compass_rotateface)))
 		{
-			compassView.setFaceRotation(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_rotateface)));
+			compassView.getThread().setFaceRotation(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_rotateface)));
 		}
 		if (key.equals(getString(R.string.pref_compass_disableorientation)))
 		{
@@ -224,4 +227,13 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 		}
 	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState)
+	{
+		// Just have the View's thread save its state into our Bundle
+		super.onSaveInstanceState(outState);
+		compassView.getThread().saveState(outState);
+	}
+
 }
