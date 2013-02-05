@@ -31,7 +31,6 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -42,6 +41,15 @@ import com.androzic.util.easing.QuinticInOut;
 
 public class CompassView extends SurfaceView implements SurfaceHolder.Callback
 {
+	/** The thread that actually draws the animation */
+	private CompassThread thread;
+	
+	private boolean isSmooth;
+	private boolean rotateFace;
+	
+	private float azimuth;
+	private float pitch;
+
 	class CompassThread extends Thread
 	{
 		private static final float INSTRUMENTAL_ERROR = 1.f;
@@ -57,12 +65,6 @@ public class CompassView extends SurfaceView implements SurfaceHolder.Callback
 		private RectF rect30;
 		private RectF rect10;
 		private RectF rect5;
-
-		private float azimuth;
-		private float pitch;
-
-		private boolean isSmooth;
-		private boolean rotateFace;
 
 		private Easing animation;
 
@@ -88,7 +90,7 @@ public class CompassView extends SurfaceView implements SurfaceHolder.Callback
 		private int canvasWidth;
 		private int canvasHeight;
 
-		public CompassThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
+		public CompassThread(SurfaceHolder surfaceHolder)
 		{
 			// get handles to some important objects
 			this.surfaceHolder = surfaceHolder;
@@ -112,14 +114,9 @@ public class CompassView extends SurfaceView implements SurfaceHolder.Callback
 
 			compassArrow = BitmapFactory.decodeResource(getResources(), R.drawable.compass_needle);
 
-			azimuth = 0;
-			pitch = 0;
 			azimuthRealTime = 0;
 			pitchRealTime = 0;
 			animation = new QuinticInOut();
-
-			isSmooth = true;
-			rotateFace = false;
 		}
 
 		public void setSmothing(boolean smoothing)
@@ -134,7 +131,7 @@ public class CompassView extends SurfaceView implements SurfaceHolder.Callback
 		{
 			synchronized (surfaceHolder)
 			{
-				this.rotateFace = rotateFace;
+				CompassView.this.rotateFace = rotateFace;
 			}
 		}
 
@@ -145,7 +142,7 @@ public class CompassView extends SurfaceView implements SurfaceHolder.Callback
 				if (Math.abs(azimuth - azimuthRealTime) < INSTRUMENTAL_ERROR)
 					return;
 	
-				this.azimuth = azimuth;
+				CompassView.this.azimuth = azimuth;
 	
 				if (isSmooth)
 					calcAzimuthRotation();
@@ -161,7 +158,7 @@ public class CompassView extends SurfaceView implements SurfaceHolder.Callback
 				if (Math.abs(pitch - pitchRealTime) < INSTRUMENTAL_ERROR)
 					return;
 	
-				this.pitch = pitch;
+				CompassView.this.pitch = pitch;
 	
 				if (isSmooth)
 					calcPitchRotation();
@@ -214,38 +211,6 @@ public class CompassView extends SurfaceView implements SurfaceHolder.Callback
 						surfaceHolder.unlockCanvasAndPost(c);
 					}
 				}
-			}
-		}
-
-		/**
-		 * Dump game state to the provided Bundle. Typically called when the
-		 * Activity is being suspended.
-		 * 
-		 * @return Bundle with this view's state
-		 */
-		public Bundle saveState(Bundle map)
-		{
-			synchronized (surfaceHolder)
-			{
-				if (map != null)
-				{
-					map.putFloat("azimuth", azimuth);
-					map.putFloat("pitch", pitch);
-					map.putBoolean("isSmooth", isSmooth);
-					map.putBoolean("rotateFace", rotateFace);
-				}
-			}
-			return map;
-		}
-
-		public synchronized void restoreState(Bundle savedState)
-		{
-			synchronized (surfaceHolder)
-			{
-				azimuth = savedState.getFloat("azimuth");
-				pitch = savedState.getFloat("pitch");
-				isSmooth = savedState.getBoolean("isSmooth");
-				rotateFace = savedState.getBoolean("rotateFace");
 			}
 		}
 
@@ -490,21 +455,19 @@ public class CompassView extends SurfaceView implements SurfaceHolder.Callback
 		}
 	}
 
-	/** The thread that actually draws the animation */
-	private CompassThread thread;
-
 	public CompassView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
 
+		isSmooth = true;
+		rotateFace = false;
+
+		azimuth = 0;
+		pitch = 0;
+		
 		// register our interest in hearing about changes to our surface
 		SurfaceHolder holder = getHolder();
 		holder.addCallback(this);
-
-		// create thread only; it's started in surfaceCreated()
-		thread = new CompassThread(holder, context, null);
-
-		setFocusable(true); // make sure we get key events
 	}
 
 	public CompassThread getThread()
@@ -512,23 +475,31 @@ public class CompassView extends SurfaceView implements SurfaceHolder.Callback
 		return thread;
 	}
 
-	/*
-	 * Callback invoked when the Surface has been created and is ready to be
-	 * used.
-	 */
+	public void setSmothing(boolean smoothing)
+	{
+		if (thread != null)
+			thread.setSmothing(smoothing);
+		else
+			isSmooth = smoothing;
+	}
+
+	public void setFaceRotation(boolean rotateFace)
+	{
+		if (thread != null)
+			thread.setFaceRotation(rotateFace);
+		else
+			this.rotateFace = rotateFace;
+	}
+
 	public void surfaceCreated(SurfaceHolder holder)
 	{
 		// start the thread here so that we don't busy-wait in run()
 		// waiting for the surface to be created
+		thread = new CompassThread(holder);
 		thread.setRunning(true);
 		thread.start();
 	}
 
-	/*
-	 * Callback invoked when the Surface has been destroyed and must no longer
-	 * be touched. WARNING: after this method returns, the Surface/Canvas must
-	 * never be touched again!
-	 */
 	public void surfaceDestroyed(SurfaceHolder holder)
 	{
 		// we have to tell thread to shut down & wait for it to finish, or else
@@ -552,5 +523,31 @@ public class CompassView extends SurfaceView implements SurfaceHolder.Callback
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
 	{
         thread.setSurfaceSize(width, height);
+	}
+
+	/**
+	 * Dump game state to the provided Bundle. Typically called when the
+	 * Activity is being suspended.
+	 * 
+	 * @return Bundle with this view's state
+	 */
+	public Bundle saveState(Bundle map)
+	{
+		if (map != null)
+		{
+			map.putFloat("azimuth", azimuth);
+			map.putFloat("pitch", pitch);
+			map.putBoolean("isSmooth", isSmooth);
+			map.putBoolean("rotateFace", rotateFace);
+		}
+		return map;
+	}
+
+	public synchronized void restoreState(Bundle savedState)
+	{
+		azimuth = savedState.getFloat("azimuth");
+		pitch = savedState.getFloat("pitch");
+		isSmooth = savedState.getBoolean("isSmooth");
+		rotateFace = savedState.getBoolean("rotateFace");
 	}
 }

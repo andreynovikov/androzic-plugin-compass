@@ -78,7 +78,7 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 		compassView = (CompassView) findViewById(R.id.compass);
 
 		if (savedInstanceState != null)
-			compassView.getThread().restoreState(savedInstanceState);
+			compassView.restoreState(savedInstanceState);
 
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		if (sensorManager != null)
@@ -93,9 +93,6 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 		}
 
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_compass_smooth));
-		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_compass_rotateface));
-		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_compass_disableorientation));
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 	}
 
@@ -123,6 +120,11 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 				y = SensorManager.AXIS_MINUS_X;
 				break;
 		}
+		
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_compass_smooth));
+		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_compass_rotateface));
+		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_compass_disableorientation));
 	}
 
 	@Override
@@ -181,8 +183,12 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 					while (azimuth > 360.)
 						azimuth -= 360.;
 
-					compassView.getThread().setAzimuth(azimuth);
-					compassView.getThread().setPitch(pitch);
+					CompassView.CompassThread thread = compassView.getThread();
+					if (thread != null)
+					{
+						thread.setAzimuth(azimuth);
+						thread.setPitch(pitch);
+					}
 				}
 			}
 		}
@@ -213,11 +219,11 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 	{
 		if (key.equals(getString(R.string.pref_compass_smooth)))
 		{
-			compassView.getThread().setSmothing(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_smooth)));
+			compassView.setSmothing(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_smooth)));
 		}
 		if (key.equals(getString(R.string.pref_compass_rotateface)))
 		{
-			compassView.getThread().setFaceRotation(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_rotateface)));
+			compassView.setFaceRotation(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.def_rotateface)));
 		}
 		if (key.equals(getString(R.string.pref_compass_disableorientation)))
 		{
@@ -233,7 +239,7 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 	{
 		// Just have the View's thread save its state into our Bundle
 		super.onSaveInstanceState(outState);
-		compassView.getThread().saveState(outState);
+		compassView.saveState(outState);
 	}
 
 }
