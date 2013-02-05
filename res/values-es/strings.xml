@@ -4,6 +4,9 @@
   <string name="app_name">Complemento de brújula Androzic</string>
   <string name="compass_title">Brújula</string>
   <string name="menu_preferences">Configuración</string>
+  <string name="msg_launcherrestart">El icono sólo desaparecerá después del próximo reinicio del lanzador (dispositivo)</string>
   <string name="pref_compass_smooth_title">Rotación suave</string>
+  <string name="pref_compass_rotateface_title">Rotar imagen</string>
   <string name="pref_compass_disableorientation_title">Deshabilitar el cambio de orientación</string>
+  <string name="pref_compass_disablelauncher_title">No mostrar en el lanzador</string>
 </resources>

@@ -4,6 +4,9 @@
   <string name="app_name">Плагин компаса для Androzic</string>
   <string name="compass_title">Компас</string>
   <string name="menu_preferences">Настройки</string>
+  <string name="msg_launcherrestart">Значок исчезнет только после перезапуска ланчера (устройства)</string>
   <string name="pref_compass_smooth_title">Плавное вращение</string>
+  <string name="pref_compass_rotateface_title">Вращать циферблат</string>
   <string name="pref_compass_disableorientation_title">Отключить смену ориентации</string>
+  <string name="pref_compass_disablelauncher_title">Не показывать в ланчере</string>
 </resources>
