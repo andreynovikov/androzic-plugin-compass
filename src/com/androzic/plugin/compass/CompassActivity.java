@@ -21,11 +21,13 @@
 package com.androzic.plugin.compass;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -38,6 +40,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class CompassActivity extends Activity implements SensorEventListener, OnSharedPreferenceChangeListener
 {
@@ -120,7 +123,7 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 				y = SensorManager.AXIS_MINUS_X;
 				break;
 		}
-		
+
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_compass_smooth));
 		onSharedPreferenceChanged(sharedPreferences, getString(R.string.pref_compass_rotateface));
@@ -231,6 +234,14 @@ public class CompassActivity extends Activity implements SensorEventListener, On
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			else
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+		}
+		if (key.equals(getString(R.string.pref_compass_disablelauncher)))
+		{
+			boolean disable = sharedPreferences.getBoolean(key, false);
+			ComponentName componentToDisable = new ComponentName("com.androzic.plugin.compass", "com.androzic.plugin.compass.LauncherActivity");
+			getPackageManager().setComponentEnabledSetting(componentToDisable, disable? PackageManager.COMPONENT_ENABLED_STATE_DISABLED : PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+			if (disable)
+				Toast.makeText(this, getString(R.string.msg_launcherrestart), Toast.LENGTH_LONG).show();
 		}
 	}
 

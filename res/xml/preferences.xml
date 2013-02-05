@@ -13,5 +13,9 @@
         android:defaultValue="@bool/def_disableorientation"
         android:key="@string/pref_compass_disableorientation"
         android:title="@string/pref_compass_disableorientation_title" />
-
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/pref_compass_disablelauncher"
+        android:title="@string/pref_compass_disablelauncher_title" />
+    
 </PreferenceScreen>

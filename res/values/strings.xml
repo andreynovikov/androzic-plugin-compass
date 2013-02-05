@@ -4,8 +4,10 @@
     <string name="app_name">Androzic Compass Plugin</string>
     <string name="compass_title">Compass</string>
     <string name="menu_preferences">Settings</string>
+    <string name="msg_launcherrestart">The icon will disappear only after next home launcher (device) restart</string>
     <string name="pref_compass_smooth_title">Smooth rotation</string>
     <string name="pref_compass_rotateface_title">Rotate face</string>
     <string name="pref_compass_disableorientation_title">Disable orientation change</string>
-
+    <string name="pref_compass_disablelauncher_title">Do not show in launcher</string>
+    
 </resources>
