@@ -4,6 +4,9 @@
   <string name="app_name">Plugin Bussola Androzic</string>
   <string name="compass_title">Bussola</string>
   <string name="menu_preferences">Impostazioni</string>
+  <string name="msg_launcherrestart">The icon will disappear only after next home launcher (device) restart</string>
   <string name="pref_compass_smooth_title">Rotazione attenuata</string>
+  <string name="pref_compass_rotateface_title">Rotate face</string>
   <string name="pref_compass_disableorientation_title">Disabilita il cambio di orientamento</string>
+  <string name="pref_compass_disablelauncher_title">Do not show in launcher</string>
 </resources>
