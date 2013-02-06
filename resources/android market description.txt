@@ -1,4 +1,4 @@
-<b>This is an Androzic plugin.</b> It requires Androzic to be installed. It provides magnetic compass screen. Requires Androzic version 1.7 or higher.
+<b>This is an Androzic plugin.</b> It provides magnetic compass screen. It can be run as a standalone application. If used as a plugin it requires Androzic version 1.7 or higher. Launcher icon can be disabled.
 
 The compass uses magnetic sensor of your device and works correctly both in portrait and landscape mode, optionally locked to portrait mode.
 
